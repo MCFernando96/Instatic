@@ -1,0 +1,61 @@
+# Dokploy production stack.
+#
+# One file on purpose: Dokploy deploys a single Compose path and does not
+# layer the VPS overrides (compose.prod.yml + compose.sqlite.yml +
+# compose.build.yml). This file is that stack for a single-site SQLite
+# install, built from the repo Dockerfile.
+#
+# Do not put Traefik labels here. Dokploy's Domains tab injects the router
+# for the `app` service on container port 3001. A second Caddy (compose.tls.yml)
+# would bind 80/443, which Traefik already owns.
+#
+# Do not replace the root docker-compose.yml. That file is the local-dev
+# Postgres service used by `bun run dev`.
+#
+# Dokploy writes the Environment tab to a `.env` next to this file and does
+# not inject those variables into the container. Reference each one below.
+# Set these in the Dokploy Environment tab (never commit the values):
+#
+#   INSTATIC_SECRET_KEY   output of `bun run scripts/generate-secret-key.ts`
+#   PUBLIC_ORIGIN         https://example.com,https://www.example.com
+#   TRUSTED_PROXY_CIDRS   172.16.0.0/12
+#
+# `ports: ["3001"]` publishes the container port on a random host port.
+# The public door is Traefik, not :3001.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: instatic:dokploy
+    restart: unless-stopped
+    ports:
+      - "3001"
+    environment:
+      PORT: "3001"
+      DATABASE_URL: sqlite:/app/data/cms.db
+      UPLOADS_DIR: /app/uploads
+      STATIC_DIR: /app/dist
+      INSTATIC_SECRET_KEY: ${INSTATIC_SECRET_KEY:-}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-}
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
+    volumes:
+      - data:/app/data
+      - uploads:/app/uploads
+    networks:
+      - dokploy-network
+    healthcheck:
+      test: ["CMD", "bun", "run", "server/healthcheck.ts"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  data:
+  uploads:
+
+networks:
+  dokploy-network:
+    external: true

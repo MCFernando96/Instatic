@@ -245,6 +245,7 @@ Backups are covered in [backup-restore.md](backup-restore.md).
 ## Related
 
 - [deployment/README.md](README.md) — deployment overview
+- [dokploy.md](dokploy.md) — same image on Dokploy, where Traefik already owns 80/443
 - [docker-image.md](docker-image.md) — generic Docker image contract
 - [tls-caddy.md](tls-caddy.md) — HTTPS overlay
 - [backup-restore.md](backup-restore.md) — backup and restore procedures
