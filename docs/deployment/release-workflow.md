@@ -2,7 +2,7 @@
 
 This maintainer guide covers publishing Instatic Docker images.
 
-End users do not need this page to deploy Instatic. They follow [railway.md](railway.md), [render.md](render.md), [vps.md](vps.md), or [docker-image.md](docker-image.md). Maintainers use this page to keep `ghcr.io/corebunch/instatic` release tags aligned with source tags and deployment templates.
+End users do not need this page to deploy Instatic. They follow [railway.md](railway.md), [render.md](render.md), [vps.md](vps.md), [dokploy.md](dokploy.md), or [docker-image.md](docker-image.md). Maintainers use this page to keep `ghcr.io/corebunch/instatic` release tags aligned with source tags and deployment templates.
 
 ---
 
